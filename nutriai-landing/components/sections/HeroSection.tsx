@@ -2,7 +2,8 @@
 
 import { motion, useScroll, useTransform } from "framer-motion";
 import { useRef } from "react";
-import { ArrowDown, Flame, Leaf, Clock } from "lucide-react";
+import Link from "next/link";
+import { Flame, Leaf, Clock } from "lucide-react";
 import Button from "@/components/ui/Button";
 import { cn } from "@/lib/utils";
 
@@ -56,7 +57,7 @@ export default function HeroSection() {
             </p>
 
             {/* Microcopy IA */}
-            <div className="mt-4 flex flex-wrap gap-3">
+<div className="mt-4 flex flex-wrap gap-3">
               <span className="inline-flex items-center gap-1.5 text-sm font-medium text-text-secondary">
                 <span className="w-2 h-2 rounded-full bg-brand" /> Motor inteligente
               </span>
@@ -72,9 +73,9 @@ export default function HeroSection() {
               <Button size="lg" className="animate-pulse2">
                 Crear mi dieta gratis
               </Button>
-              <Button variant="ghost" size="lg" className="hidden sm:inline-flex">
-                Ver cómo funciona <ArrowDown className="ml-2 h-4 w-4" />
-              </Button>
+              <Link href="#como-funciona" className="hidden sm:inline-flex items-center justify-center font-medium rounded-full transition-all duration-200 text-text-secondary hover:text-brand hover:bg-brand-pale px-6 py-3 text-base">
+                Ver cómo funciona
+              </Link>
             </div>
           </motion.div>
 
@@ -90,41 +91,13 @@ export default function HeroSection() {
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.6, delay: 0.2, ease: "easeOut" }}
             >
-              {/* Mockup placeholder */}
-              <div className="aspect-[4/3] rounded-3xl bg-gradient-to-br from-brand-pale to-white shadow-overlay overflow-hidden border border-gray-100">
-                <div className="p-6 h-full flex flex-col">
-                  {/* Fake app UI */}
-                  <div className="flex items-center gap-3 mb-6">
-                    <div className="w-10 h-10 rounded-full bg-brand/20" />
-                    <div className="space-y-1">
-                      <div className="w-24 h-3 bg-gray-200 rounded" />
-                      <div className="w-16 h-2 bg-gray-100 rounded" />
-                    </div>
-                  </div>
-                  <div className="grid grid-cols-2 gap-4 flex-1">
-                    <div className="bg-white rounded-2xl p-4 shadow-card">
-                      <div className="w-8 h-8 rounded-lg bg-brand/10 mb-2" />
-                      <div className="w-16 h-4 bg-gray-200 rounded mb-1" />
-                      <div className="w-12 h-2 bg-gray-100 rounded" />
-                    </div>
-                    <div className="bg-white rounded-2xl p-4 shadow-card">
-                      <div className="w-8 h-8 rounded-lg bg-brand/10 mb-2" />
-                      <div className="w-16 h-4 bg-gray-200 rounded mb-1" />
-                      <div className="w-12 h-2 bg-gray-100 rounded" />
-                    </div>
-                    <div className="col-span-2 bg-white rounded-2xl p-4 shadow-card">
-                      <div className="flex items-center justify-between mb-3">
-                        <div className="w-20 h-4 bg-gray-200 rounded" />
-                        <div className="w-8 h-8 rounded-full bg-brand/10" />
-                      </div>
-                      <div className="space-y-2">
-                        <div className="h-2 bg-gray-100 rounded w-full" />
-                        <div className="h-2 bg-gray-100 rounded w-full" />
-                        <div className="h-2 bg-gray-100 rounded w-2/3" />
-                      </div>
-                    </div>
-                  </div>
-                </div>
+              {/* Food image */}
+              <div className="aspect-[4/3] rounded-3xl shadow-overlay overflow-hidden border border-gray-100">
+                <img
+                  src="/images/ChatGPT Image May 11, 2026 at 10_05_56 PM.png"
+                  alt="Plato de comida saludable"
+                  className="w-full h-full object-cover"
+                />
               </div>
 
               {/* Overlay cards */}

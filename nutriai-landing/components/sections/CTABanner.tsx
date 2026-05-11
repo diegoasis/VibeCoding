@@ -30,9 +30,9 @@ export default function CTABanner() {
           </p>
 
           <div className="mt-10">
-            <Button size="lg" className="bg-white text-gray-900 hover:bg-gray-100">
+            <button className="px-8 py-4 text-lg font-medium rounded-full bg-white text-gray-900 border-2 border-gray-200 hover:bg-brand-pale hover:border-brand-pale transition-all duration-200">
               Crear mi dieta personalizada →
-            </Button>
+            </button>
           </div>
 
           <div className="mt-8 flex flex-wrap items-center justify-center gap-6 text-sm text-brand-mint">

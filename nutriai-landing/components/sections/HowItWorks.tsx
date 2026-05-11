@@ -1,6 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
+import { ArrowRight } from "lucide-react";
 import { steps } from "@/data/steps";
 import { useInView } from "@/hooks/useInView";
 import StepCard from "@/components/ui/StepCard";
@@ -27,31 +28,56 @@ export default function HowItWorks() {
         </motion.div>
 
         <div className="relative">
-          {/* Connector line - desktop only */}
-          <div className="absolute top-32 left-1/2 hidden h-1 w-full -translate-x-1/2 md:block lg:top-40">
-            <div className="h-full w-full rounded-full bg-gradient-to-r from-brand-pale via-brand to-brand-pale" />
-          </div>
+          <div className="grid gap-12 md:grid-cols-[1fr_auto_1fr_auto_1fr] md:gap-2 items-start">
+            <motion.div
+              initial={{ opacity: 0, y: 40 }}
+              animate={isInView ? { opacity: 1, y: 0 } : {}}
+              transition={{ duration: 0.5, delay: 0.2 }}
+            >
+              <StepCard
+                number={1}
+                icon={steps[0].icon}
+                title={steps[0].title}
+                description={steps[0].description}
+                className="md:hover:scale-105 transition-transform duration-300"
+              />
+            </motion.div>
 
-          <div className="grid gap-12 md:grid-cols-3 md:gap-8">
-            {steps.map((step, index) => (
-              <motion.div
-                key={step.number}
-                initial={{ opacity: 0, y: 40 }}
-                animate={isInView ? { opacity: 1, y: 0 } : {}}
-                transition={{ duration: 0.5, delay: 0.2 + index * 0.15 }}
-              >
-                <StepCard
-                  number={step.number}
-                  icon={step.icon}
-                  title={step.title}
-                  description={step.description}
-                  className={cn(
-                    "md:hover:scale-105 transition-transform duration-300",
-                    index === 1 && "md:translate-y-8 lg:translate-y-12"
-                  )}
-                />
-              </motion.div>
-            ))}
+            <div className="hidden md:flex md:items-center md:pt-8">
+              <ArrowRight className="w-6 h-6 text-gray-300" />
+            </div>
+
+            <motion.div
+              initial={{ opacity: 0, y: 40 }}
+              animate={isInView ? { opacity: 1, y: 0 } : {}}
+              transition={{ duration: 0.5, delay: 0.35 }}
+            >
+              <StepCard
+                number={2}
+                icon={steps[1].icon}
+                title={steps[1].title}
+                description={steps[1].description}
+                className="md:hover:scale-105 transition-transform duration-300"
+              />
+            </motion.div>
+
+            <div className="hidden md:flex md:items-center md:pt-8">
+              <ArrowRight className="w-6 h-6 text-brand" />
+            </div>
+
+            <motion.div
+              initial={{ opacity: 0, y: 40 }}
+              animate={isInView ? { opacity: 1, y: 0 } : {}}
+              transition={{ duration: 0.5, delay: 0.5 }}
+            >
+              <StepCard
+                number={3}
+                icon={steps[2].icon}
+                title={steps[2].title}
+                description={steps[2].description}
+                className="md:hover:scale-105 transition-transform duration-300"
+              />
+            </motion.div>
           </div>
         </div>
       </div>

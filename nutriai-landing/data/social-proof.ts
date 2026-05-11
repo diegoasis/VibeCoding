@@ -3,8 +3,8 @@ export const socialProof = {
   rating: 4.9,
   ratingCount: 847,
   badges: [
-    { label: "Sin commitment", icon: "🔒" },
-    { label: "Datos seguros", icon: "🛡️" },
-    { label: "Soporte 24/7", icon: "💬" },
+    { label: "100% Gratis", icon: "🎁" },
+    { label: "Sin registro", icon: "⚡" },
+    { label: "En 2 minutos", icon: "⏱️" },
   ],
 };
