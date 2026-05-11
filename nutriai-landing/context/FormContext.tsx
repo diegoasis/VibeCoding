@@ -12,6 +12,9 @@ interface FormContextType {
   prevStep: () => void;
   canGoNext: () => boolean;
   isValidStep: (step: number) => boolean;
+  isEditing: boolean;
+  startEditing: () => void;
+  saveAndReturn: () => void;
 }
 
 const FormContext = createContext<FormContextType | undefined>(undefined);
@@ -19,6 +22,7 @@ const FormContext = createContext<FormContextType | undefined>(undefined);
 export function FormProvider({ children }: { children: ReactNode }) {
   const [currentStep, setCurrentStep] = useState(1);
   const [formData, setFormData] = useState<FormData>(initialFormData);
+  const [isEditing, setIsEditing] = useState(false);
 
   const updateFormData = (data: Partial<FormData>) => {
     setFormData((prev) => ({ ...prev, ...data }));
@@ -30,6 +34,15 @@ export function FormProvider({ children }: { children: ReactNode }) {
 
   const prevStep = () => {
     if (currentStep > 1) setCurrentStep(currentStep - 1);
+  };
+
+  const startEditing = () => {
+    setIsEditing(true);
+  };
+
+  const saveAndReturn = () => {
+    setIsEditing(false);
+    setCurrentStep(7);
   };
 
   const isValidStep = (step: number): boolean => {
@@ -66,6 +79,9 @@ export function FormProvider({ children }: { children: ReactNode }) {
         prevStep,
         canGoNext,
         isValidStep,
+        isEditing,
+        startEditing,
+        saveAndReturn,
       }}
     >
       {children}

@@ -48,7 +48,12 @@ function SummaryItem({ icon: Icon, title, children, onEdit }: SummaryItemProps) 
 }
 
 export default function Step7Summary() {
-  const { formData, setCurrentStep } = useForm();
+  const { formData, setCurrentStep, startEditing } = useForm();
+
+  const handleEdit = (step: number) => {
+    startEditing();
+    setCurrentStep(step);
+  };
 
   const calculateCalories = () => {
     const bmr = formData.sex === "hombre"
@@ -89,33 +94,33 @@ export default function Step7Summary() {
       </div>
 
       <div className="grid grid-cols-2 gap-4">
-        <SummaryItem icon={User} title="Perfil físico" onEdit={() => setCurrentStep(1)}>
+        <SummaryItem icon={User} title="Perfil físico" onEdit={() => handleEdit(1)}>
           {formData.sex === "hombre" ? "Hombre" : "Mujer"} · {formData.age} años<br />
           {formData.weight} kg · {formData.height} cm
         </SummaryItem>
 
-        <SummaryItem icon={Activity} title="Actividad" onEdit={() => setCurrentStep(2)}>
+        <SummaryItem icon={Activity} title="Actividad" onEdit={() => handleEdit(2)}>
           {activityLabels[formData.activityLevel || "ligeramente_activo"]}
           {formData.exerciseTypes.length > 0 && ` · ${formData.exerciseTypes.join(", ")}`}
         </SummaryItem>
 
-        <SummaryItem icon={Target} title="Objetivos" onEdit={() => setCurrentStep(3)}>
+        <SummaryItem icon={Target} title="Objetivos" onEdit={() => handleEdit(3)}>
           {formData.goals.map(g => g.replace("_", " ")).join(", ")}
           {formData.goals.includes("perder_peso") && ` (${formData.goalSpeed})`}
         </SummaryItem>
 
-        <SummaryItem icon={Ban} title="Restricciones" onEdit={() => setCurrentStep(4)}>
+        <SummaryItem icon={Ban} title="Restricciones" onEdit={() => handleEdit(4)}>
           {dietLabels[formData.dietType]}
           {formData.allergies.length > 0 && <><br />Sin: {formData.allergies.join(", ")}</>}
           {formData.dislikedFoods.length > 0 && <><br />No come: {formData.dislikedFoods.join(", ")}</>}
         </SummaryItem>
 
-        <SummaryItem icon={Utensils} title="Gustos" onEdit={() => setCurrentStep(5)}>
+        <SummaryItem icon={Utensils} title="Gustos" onEdit={() => handleEdit(5)}>
           {formData.cuisines.join(", ")}<br />
           Picante: {formData.spiceLevel.replace("_", " ")}
         </SummaryItem>
 
-        <SummaryItem icon={Home} title="Hábitos" onEdit={() => setCurrentStep(6)}>
+        <SummaryItem icon={Home} title="Hábitos" onEdit={() => handleEdit(6)}>
           {formData.mealsPerDay} comidas/día · {formData.budget}<br />
           Cocina: {formData.cookAtHome === "si" ? "Sí" : formData.cookAtHome === "a_veces" ? "A veces" : "No"}
         </SummaryItem>
