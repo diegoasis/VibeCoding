@@ -1,9 +1,9 @@
 "use client";
 
+import Link from "next/link";
 import { useEffect, useRef } from "react";
 import { X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-import Button from "@/components/ui/Button";
 
 interface MobileDrawerProps {
   open: boolean;
@@ -70,31 +70,33 @@ export default function MobileDrawer({ open, onClose }: MobileDrawerProps) {
             </div>
 
             <nav className="flex flex-col gap-4">
-              <a
-                href="#como-funciona"
+              <Link
+                href="/#como-funciona"
                 className="font-body text-lg text-text-primary py-3 border-b border-gray-200"
                 onClick={onClose}
               >
                 Cómo funciona
-              </a>
-              <a
-                href="#funciones"
+              </Link>
+              <Link
+                href="/#funciones"
                 className="font-body text-lg text-text-primary py-3 border-b border-gray-200"
                 onClick={onClose}
               >
                 Funciones
-              </a>
-              <a
-                href="#testimonios"
+              </Link>
+              <Link
+                href="/#testimonios"
                 className="font-body text-lg text-text-primary py-3 border-b border-gray-200"
                 onClick={onClose}
               >
                 Testimonios
-              </a>
+              </Link>
             </nav>
 
             <div className="mt-8">
-              <Button className="w-full">Crear mi dieta gratis</Button>
+              <Link href="/crear-dieta" className="block w-full px-6 py-3 text-base font-medium text-center text-white bg-brand rounded-full hover:bg-brand-dark transition-all">
+                Crear mi dieta gratis
+              </Link>
             </div>
           </motion.div>
         </>

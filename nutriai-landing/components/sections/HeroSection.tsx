@@ -70,9 +70,9 @@ export default function HeroSection() {
             </div>
 
             <div className="mt-8 flex flex-col gap-4 sm:flex-row">
-              <Button size="lg" className="animate-pulse2">
+              <Link href="/crear-dieta" className="inline-flex items-center justify-center px-8 py-4 text-lg font-medium text-white bg-brand rounded-full hover:bg-brand-dark transition-all animate-pulse2">
                 Crear mi dieta gratis
-              </Button>
+              </Link>
               <Link href="#como-funciona" className="hidden sm:inline-flex items-center justify-center font-medium rounded-full transition-all duration-200 text-text-secondary hover:text-brand hover:bg-brand-pale px-6 py-3 text-base">
                 Ver cómo funciona
               </Link>

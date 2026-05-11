@@ -1,8 +1,8 @@
 "use client";
 
+import Link from "next/link";
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import Button from "@/components/ui/Button";
 
 export default function StickyMobileCTA() {
   const [visible, setVisible] = useState(false);
@@ -25,7 +25,9 @@ export default function StickyMobileCTA() {
           exit={{ opacity: 0, y: 100 }}
           className="fixed bottom-4 left-4 right-4 z-40 md:hidden"
         >
-          <Button className="w-full shadow-overlay">Crear mi dieta gratis</Button>
+          <Link href="/crear-dieta" className="block w-full px-6 py-3 text-base font-medium text-center text-white bg-brand rounded-full shadow-overlay hover:bg-brand-dark transition-all">
+            Crear mi dieta gratis
+          </Link>
         </motion.div>
       )}
     </AnimatePresence>

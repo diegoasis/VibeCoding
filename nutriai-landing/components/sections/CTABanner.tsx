@@ -1,9 +1,10 @@
 "use client";
 
+import Link from "next/link";
 import { motion } from "framer-motion";
 import { useInView } from "@/hooks/useInView";
-import Button from "@/components/ui/Button";
-import { Shield, CreditCard } from "lucide-react";
+import { Zap, Target } from "lucide-react";
+
 
 export default function CTABanner() {
   const { ref, isInView } = useInView({ threshold: 0.3, triggerOnce: true });
@@ -30,19 +31,19 @@ export default function CTABanner() {
           </p>
 
           <div className="mt-10">
-            <button className="px-8 py-4 text-lg font-medium rounded-full bg-white text-gray-900 border-2 border-gray-200 hover:bg-brand-pale hover:border-brand-pale transition-all duration-200">
+            <Link href="/crear-dieta" className="inline-block px-8 py-4 text-lg font-medium rounded-full bg-white text-gray-900 border-2 border-gray-200 hover:bg-brand-pale hover:border-brand-pale transition-all duration-200">
               Crear mi dieta personalizada →
-            </button>
+            </Link>
           </div>
 
           <div className="mt-8 flex flex-wrap items-center justify-center gap-6 text-sm text-brand-mint">
             <span className="flex items-center gap-2">
-              <CreditCard className="h-4 w-4" />
-              Sin tarjeta de crédito
+              <Zap className="w-4 h-4" />
+              En 2 minutos
             </span>
             <span className="flex items-center gap-2">
-              <Shield className="h-4 w-4" />
-              Datos seguros
+              <Target className="w-4 h-4" />
+              100% personalizado
             </span>
           </div>
         </motion.div>

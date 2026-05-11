@@ -26,16 +26,18 @@ export default function Navbar() {
           </Link>
 
           <div className="hidden items-center gap-8 md:flex">
-            <a href="#como-funciona" className="font-body text-text-secondary hover:text-brand transition-colors">
+            <Link href="/#como-funciona" className="font-body text-text-secondary hover:text-brand transition-colors">
               Cómo funciona
-            </a>
-            <a href="#funciones" className="font-body text-text-secondary hover:text-brand transition-colors">
+            </Link>
+            <Link href="/#funciones" className="font-body text-text-secondary hover:text-brand transition-colors">
               Funciones
-            </a>
-            <a href="#testimonios" className="font-body text-text-secondary hover:text-brand transition-colors">
+            </Link>
+            <Link href="/#testimonios" className="font-body text-text-secondary hover:text-brand transition-colors">
               Testimonios
-            </a>
-            <Button>Crear mi dieta gratis</Button>
+            </Link>
+            <Link href="/crear-dieta" className="px-6 py-3 text-base font-medium text-white bg-brand rounded-full hover:bg-brand-dark transition-all">
+                Crear mi dieta gratis
+              </Link>
           </div>
 
           <button

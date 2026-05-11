@@ -37,10 +37,6 @@ export default function Footer() {
           <p className="font-body text-sm text-text-secondary">
             © {currentYear} NutriAI. Todos los derechos reservados.
           </p>
-          <div className="flex items-center gap-4">
-            <span className="font-body text-xs text-text-secondary">🔒 Datos seguros</span>
-            <span className="font-body text-xs text-text-secondary">🛡️ SSL加密</span>
-          </div>
         </div>
       </div>
     </footer>
