@@ -1,0 +1,57 @@
+@import "tailwindcss";
+
+@theme inline {
+  --color-brand: #1D9E75;
+  --color-brand-dark: #0F6E56;
+  --color-brand-mint: #5DCAA5;
+  --color-brand-pale: #E1F5EE;
+  --color-cream: #F9F6F0;
+  --color-text-primary: #1A1A1A;
+  --color-text-secondary: #6B7280;
+
+  --font-display: var(--font-fraunces), serif;
+  --font-body: var(--font-jakarta), sans-serif;
+
+  --shadow-card: 0 4px 12px rgba(0,0,0,0.06);
+  --shadow-card-hover: 0 10px 24px rgba(0,0,0,0.10);
+  --shadow-overlay: 0 20px 40px rgba(0,0,0,0.12);
+  --shadow-navbar: 0 2px 8px rgba(0,0,0,0.08);
+
+  --animate-float: float 3s ease-in-out infinite;
+  --animate-pulse2: pulse2 2s ease-in-out infinite;
+  --animate-shimmer: shimmer 1.5s infinite;
+
+  @keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-8px); }
+  }
+
+  @keyframes pulse2 {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.03); }
+  }
+
+  @keyframes shimmer {
+    0% { background-position: -200% 0; }
+    100% { background-position: 200% 0; }
+  }
+}
+
+:root {
+  --background: #F9F6F0;
+  --foreground: #1A1A1A;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-body);
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-display);
+}
+
+.max-w-container {
+  max-width: 1280px;
+}

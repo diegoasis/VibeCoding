@@ -1,0 +1,55 @@
+"use client";
+
+import Link from "next/link";
+import { useState } from "react";
+import { Menu } from "lucide-react";
+import { useScrolled } from "@/hooks/useScrolled";
+import { cn } from "@/lib/utils";
+import Button from "@/components/ui/Button";
+import MobileDrawer from "./MobileDrawer";
+
+export default function Navbar() {
+  const scrolled = useScrolled(50);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
+  return (
+    <>
+      <header
+        className={cn(
+          "fixed top-0 left-0 right-0 z-50 transition-all duration-200",
+          scrolled ? "bg-white/80 backdrop-blur-md shadow-navbar" : "bg-transparent"
+        )}
+      >
+        <nav className="mx-auto flex max-w-container items-center justify-between px-6 py-4 md:px-10 lg:px-20">
+          <Link href="/" className="font-display text-xl font-bold text-brand">
+            Nutri<span className="text-brand-dark">AI</span>
+          </Link>
+
+          <div className="hidden items-center gap-8 md:flex">
+            <a href="#como-funciona" className="font-body text-text-secondary hover:text-brand transition-colors">
+              Cómo funciona
+            </a>
+            <a href="#funciones" className="font-body text-text-secondary hover:text-brand transition-colors">
+              Funciones
+            </a>
+            <a href="#testimonios" className="font-body text-text-secondary hover:text-brand transition-colors">
+              Testimonios
+            </a>
+            <Button>Crear mi dieta gratis</Button>
+          </div>
+
+          <button
+            className="md:hidden p-2 text-text-primary"
+            onClick={() => setMobileMenuOpen(true)}
+            aria-label="Abrir menú"
+            aria-expanded="false"
+          >
+            <Menu className="h-6 w-6" />
+          </button>
+        </nav>
+      </header>
+
+      <MobileDrawer open={mobileMenuOpen} onClose={() => setMobileMenuOpen(false)} />
+    </>
+  );
+}
