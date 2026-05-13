@@ -20,9 +20,13 @@ export interface DietPlan {
   }>;
 }
 
-const API_KEY = "";
+const API_KEY = process.env.GROQ_API_KEY || "";
 
 export async function generateDietPlan(formData: FormData): Promise<DietPlan> {
+  if (!API_KEY) {
+    console.warn("GROQ_API_KEY no configurada. Usando plan mock.");
+    return generateMockPlan(formData);
+  }
 
   const userMealsPerDay = formData.mealsPerDay || 3;
   const isOpenToChange = formData.openToChangeMeals || false;

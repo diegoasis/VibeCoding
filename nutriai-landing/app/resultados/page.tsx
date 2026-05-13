@@ -7,7 +7,7 @@ import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import LoadingModal from "@/components/results/LoadingModal";
 import ResultsPage from "@/components/results/ResultsPage";
-import { generateDietPlan, DietPlan } from "@/lib/ai/dietService";
+import { DietPlan } from "@/lib/ai/dietService";
 function ResultadosContent() {
   const searchParams = useSearchParams();
   const [formData, setFormData] = useState<any>(null);
@@ -34,7 +34,13 @@ function ResultadosContent() {
       if (fromForm && formData) {
         try {
           console.log("Generando plan con datos:", formData);
-          const generatedPlan = await generateDietPlan(formData);
+          const response = await fetch("/api/diet", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(formData),
+          });
+          if (!response.ok) throw new Error("Error en la solicitud");
+          const generatedPlan = await response.json();
           setPlan(generatedPlan);
         } catch (error) {
           console.error("Error generating plan:", error);
