@@ -55,33 +55,6 @@ export default function Step7Summary() {
     setCurrentStep(step);
   };
 
-  const calculateCalories = () => {
-    const bmr = formData.sex === "hombre"
-      ? 88.362 + (13.397 * formData.weight) + (4.799 * formData.height) - (5.677 * formData.age)
-      : 447.593 + (9.247 * formData.weight) + (3.098 * formData.height) - (4.330 * formData.age);
-
-    const activityFactors: Record<string, number> = {
-      sedentario: 1.2,
-      ligeramente_activo: 1.375,
-      moderadamente_activo: 1.55,
-      muy_activo: 1.725,
-      extremadamente_activo: 1.9,
-    };
-
-    const tdee = bmr * (activityFactors[formData.activityLevel || "ligeramente_activo"] || 1.375);
-
-    let targetCalories = tdee;
-    if (formData.goals.includes("perder_peso")) {
-      targetCalories -= formData.goalSpeed === "suave" ? 125 : formData.goalSpeed === "agresivo" ? 375 : 250;
-    } else if (formData.goals.includes("ganar_musculo")) {
-      targetCalories += formData.goalSpeed === "suave" ? 125 : formData.goalSpeed === "agresivo" ? 375 : 250;
-    }
-
-    return Math.round(targetCalories);
-  };
-
-  const calories = calculateCalories();
-
   return (
     <div className="space-y-8">
       <div>
@@ -126,20 +99,7 @@ export default function Step7Summary() {
         </SummaryItem>
       </div>
 
-      {/* Calorías estimadas */}
-      <div className="p-6 bg-brand-pale rounded-2xl border-2 border-brand">
-        <h3 className="font-semibold text-text-primary mb-4 flex items-center gap-2">
-          📊 Tu objetivo calórico estimado
-        </h3>
-        <div className="text-center py-4">
-          <span className="text-4xl font-bold text-brand">{calories}</span>
-          <span className="text-text-secondary ml-2">kcal/día</span>
-        </div>
-        <div className="mt-4 text-sm text-text-secondary space-y-1">
-          <p>Proteína 30% · Carbohidratos 40% · Grasas 30%</p>
-          <p className="text-xs text-text-secondary mt-2">Estos valores se ajustarán en función de tu evolución.</p>
-        </div>
-      </div>
+      
     </div>
   );
 }

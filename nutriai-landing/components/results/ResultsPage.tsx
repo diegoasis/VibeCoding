@@ -3,216 +3,240 @@
 import { useState } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { Download, RefreshCw, ChefHat, Calendar, ShoppingCart, Utensils } from "lucide-react";
+import { Download, RefreshCw, ShoppingCart, Utensils, ChevronDown, ChevronUp } from "lucide-react";
+import { generatePDF } from "@/lib/ai/pdfGenerator";
 
-const weeklyPlan = {
-  calories: 1850,
-  macros: { protein: 140, carbs: 180, fat: 65 },
-  days: [
-    {
-      day: "Lunes",
-      meals: [
-        { name: "Desayuno", dish: "Avena con frutas rojas y nueces", calories: 450 },
-        { name: "Almuerzo", dish: "Pechuga de pollo con quinoa y verduras", calories: 550 },
-        { name: "Merienda", dish: "Yogur griego con miel", calories: 150 },
-        { name: "Cena", dish: "Salmón al horno con batata", calories: 500 },
-      ],
-    },
-    {
-      day: "Martes",
-      meals: [
-        { name: "Desayuno", dish: "Huevos revueltos con aguacate", calories: 400 },
-        { name: "Almuerzo", dish: "Ensalada de legumbres con tofu", calories: 520 },
-        { name: "Merienda", dish: "Frutos secos mixtos", calories: 180 },
-        { name: "Cena", dish: "Pasta integral con salsa de tomate y pollo", calories: 550 },
-      ],
-    },
-    {
-      day: "Miércoles",
-      meals: [
-        { name: "Desayuno", dish: "Tostada integral con hummus y pepino", calories: 380 },
-        { name: "Almuerzo", dish: "Arroz con merluza y guisantes", calories: 580 },
-        { name: "Merienda", dish: "Manzana con almendras", calories: 160 },
-        { name: "Cena", dish: "Wrap de lechuga con pavo y verduras", calories: 450 },
-      ],
-    },
-    {
-      day: "Jueves",
-      meals: [
-        { name: "Desayuno", dish: "Smoothie de plátano y espinacas", calories: 420 },
-        { name: "Almuerzo", dish: "Estofado de carne con verduras", calories: 600 },
-        { name: "Merienda", dish: "Queso cottage con frutas", calories: 140 },
-        { name: "Cena", dish: "Pisto con tortilla francesa", calories: 480 },
-      ],
-    },
-    {
-      day: "Viernes",
-      meals: [
-        { name: "Desayuno", dish: "Pan integral con tomate y aceite de oliva", calories: 390 },
-        { name: "Almuerzo", dish: "Paella de verduras con marisco", calories: 550 },
-        { name: "Merienda", dish: "Palitos de zanahoria con hummus", calories: 120 },
-        { name: "Cena", dish: "Pollo a la plancha con ensalada", calories: 520 },
-      ],
-    },
-    {
-      day: "Sábado",
-      meals: [
-        { name: "Desayuno", dish: "Tortilla francesa con pan integral", calories: 450 },
-        { name: "Almuerzo", dish: "Lasaña de carne con ensalada", calories: 650 },
-        { name: "Merienda", dish: "Batido de proteínas", calories: 150 },
-        { name: "Cena", dish: "Crema de verduras con tostada", calories: 400 },
-      ],
-    },
-    {
-      day: "Domingo",
-      meals: [
-        { name: "Desayuno", dish: "Tostadas con mermelada sin azúcar", calories: 400 },
-        { name: "Almuerzo", dish: "Potaje de garbanzos con espinacas", calories: 580 },
-        { name: "Merienda", dish: "Fruta variada", calories: 100 },
-        { name: "Cena", dish: "Pechuga de pavo con verduras asadas", calories: 450 },
-      ],
-    },
-  ],
-};
+interface Meal {
+  name: string;
+  dish: string;
+  calories: number;
+  protein?: number;
+  carbs?: number;
+  fat?: number;
+}
 
-const shoppingList = [
-  { category: "Proteínas", items: ["Pechuga de pollo", "Salmón", "Merluza", "Huevos", "Pavo", "Carne molida"] },
-  { category: "Vegetales", items: ["Espinacas", "Brócoli", "Zanahoria", "Pimiento", "Tomates", "Aguacate", "Verduras variadas"] },
-  { category: "Frutas", items: ["Plátano", "Manzana", "Frutos rojos", "Naranja"] },
-  { category: "Lácteos", items: ["Yogur griego", "Queso cottage", "Leche"] },
-  { category: "Legumbres", items: ["Quinoa", "Garbanzos", "Lentejas", "Judías"] },
-  { category: "Otros", items: ["Avena", "Pan integral", "Pasta integral", "Arroz", "Nueces", "Almendras"] },
-];
+interface Day {
+  day: string;
+  meals: Meal[];
+}
 
-export default function ResultsPage() {
+interface DietPlan {
+  calories: number;
+  macros: { protein: number; carbs: number; fat: number };
+  days: Day[];
+  shoppingList: Array<{
+    category: string;
+    items: string[];
+  }>;
+}
+
+interface ResultsPageProps {
+  plan: DietPlan;
+}
+
+export default function ResultsPage({ plan }: ResultsPageProps) {
   const [activeTab, setActiveTab] = useState<"semana" | "lista">("semana");
+  const [expandedDay, setExpandedDay] = useState<number | null>(null);
+  const [currentWeek, setCurrentWeek] = useState(1);
 
-  const totalCalories = weeklyPlan.days.reduce((acc, day) => 
-    acc + day.meals.reduce((m, meal) => m + meal.calories, 0), 0
-  );
+  const startIndex = (currentWeek - 1) * 7;
+  const daysPerWeek = plan.days.slice(startIndex, startIndex + 7);
+
+  const avgCalories = Math.round(plan.days.reduce((sum, d) => sum + d.meals.reduce((mSum, m) => mSum + m.calories, 0), 0) / plan.days.length);
+  const avgProtein = Math.round(plan.days.reduce((sum, d) => sum + d.meals.reduce((mSum, m) => mSum + (m.protein || 0), 0), 0) / plan.days.length);
+  const avgCarbs = Math.round(plan.days.reduce((sum, d) => sum + d.meals.reduce((mSum, m) => mSum + (m.carbs || 0), 0), 0) / plan.days.length);
+
+  const handleDownloadPDF = () => {
+    generatePDF(plan);
+  };
+
+  const totalCalories = daysPerWeek[0]?.meals.reduce((a, m) => a + m.calories, 0) || 0;
 
   return (
     <div className="min-h-screen bg-cream">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="bg-brand text-white py-16 text-center"
+        className="bg-brand text-white pt-16 pb-12 text-center"
       >
-        <h1 className="font-display text-4xl font-bold mb-4">
-          ✨ Tu plan personalizado está listo
+        <h1 className="font-display text-3xl md:text-4xl font-bold mb-3">
+          ✨ Tu Plan de 4 Semanas
         </h1>
-        <p className="text-brand-pale text-lg max-w-2xl mx-auto">
-          Basado en tu perfil: 28 años, mujer, 65 kg, objetivo perder peso
+        <p className="text-brand-pale text-base max-w-2xl mx-auto px-4">
+          Plan personalizado basado en tu perfil
         </p>
       </motion.div>
 
-      <div className="max-w-4xl mx-auto px-6 -mt-8">
-        <div className="bg-white rounded-3xl shadow-lg p-6 mb-8">
-          <div className="grid grid-cols-3 gap-6 text-center">
-            <div className="p-4">
-              <div className="text-3xl font-bold text-brand">{weeklyPlan.calories}</div>
-              <div className="text-sm text-text-secondary">kcal/día</div>
+      <div className="max-w-4xl mx-auto px-4 -mt-6">
+        <div className="bg-white rounded-2xl shadow-lg p-4 mb-4">
+          <div className="grid grid-cols-3 gap-2 text-center">
+            <div className="py-2">
+              <div className="text-2xl font-bold text-brand">{avgCalories}</div>
+              <div className="text-xs text-text-secondary">kcal/día</div>
             </div>
-            <div className="p-4 border-l border-r border-gray-100">
-              <div className="text-3xl font-bold text-brand">{weeklyPlan.macros.protein}g</div>
-              <div className="text-sm text-text-secondary">Proteína</div>
+            <div className="py-2 border-l border-r border-gray-100">
+              <div className="text-2xl font-bold text-brand">{avgProtein}g</div>
+              <div className="text-xs text-text-secondary">Proteína</div>
             </div>
-            <div className="p-4">
-              <div className="text-3xl font-bold text-brand">{weeklyPlan.macros.carbs}g</div>
-              <div className="text-sm text-text-secondary">Carbohidratos</div>
+            <div className="py-2">
+              <div className="text-2xl font-bold text-brand">{avgCarbs}g</div>
+              <div className="text-xs text-text-secondary">Carbs</div>
             </div>
           </div>
         </div>
 
-        <div className="flex gap-4 mb-8">
+        <div className="flex gap-2 mb-4 overflow-x-auto">
+          {[1, 2, 3, 4].map(week => (
+            <button
+              key={week}
+              onClick={() => setCurrentWeek(week)}
+              className={`flex-1 py-2 px-3 rounded-full text-sm font-medium whitespace-nowrap transition-all ${
+                currentWeek === week
+                  ? "bg-brand text-white"
+                  : "bg-white text-text-secondary"
+              }`}
+            >
+              Semana {week}
+            </button>
+          ))}
+        </div>
+
+        <div className="flex gap-2 mb-4">
           <button
             onClick={() => setActiveTab("semana")}
-            className={`flex-1 py-3 rounded-full font-medium transition-all ${
+            className={`flex-1 py-2 rounded-full text-sm font-medium transition-all ${
               activeTab === "semana"
                 ? "bg-brand text-white"
-                : "bg-white text-text-secondary hover:bg-gray-50"
+                : "bg-white text-text-secondary"
             }`}
           >
-            <Utensils className="inline w-4 h-4 mr-2" />
+            <Utensils className="inline w-4 h-4 mr-1" />
             Plan Semanal
           </button>
           <button
             onClick={() => setActiveTab("lista")}
-            className={`flex-1 py-3 rounded-full font-medium transition-all ${
+            className={`flex-1 py-2 rounded-full text-sm font-medium transition-all ${
               activeTab === "lista"
                 ? "bg-brand text-white"
-                : "bg-white text-text-secondary hover:bg-gray-50"
+                : "bg-white text-text-secondary"
             }`}
           >
-            <ShoppingCart className="inline w-4 h-4 mr-2" />
-            Lista de la Compra
+            <ShoppingCart className="inline w-4 h-4 mr-1" />
+            Lista Compra
           </button>
         </div>
 
         {activeTab === "semana" && (
-          <div className="space-y-6">
-            {weeklyPlan.days.map((day, index) => (
+          <div className="space-y-3">
+            {daysPerWeek.map((day, index) => (
               <motion.div
-                key={day.day}
-                initial={{ opacity: 0, y: 20 }}
+                key={`${day.day}-${index}`}
+                initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: index * 0.1 }}
-                className="bg-white rounded-2xl p-6 shadow-card"
+                transition={{ delay: index * 0.05 }}
+                className="bg-white rounded-xl overflow-hidden shadow-sm"
               >
-                <div className="flex items-center justify-between mb-4">
-                  <h3 className="font-display text-xl font-bold text-text-primary">{day.day}</h3>
-                  <span className="text-sm text-text-secondary">
-                    {day.meals.reduce((a, m) => a + m.calories, 0)} kcal
-                  </span>
-                </div>
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                  {day.meals.map((meal) => (
-                    <div key={meal.name} className="p-3 bg-gray-50 rounded-xl">
-                      <div className="text-xs text-brand font-medium mb-1">{meal.name}</div>
-                      <div className="text-sm text-text-primary">{meal.dish}</div>
-                      <div className="text-xs text-text-secondary mt-1">{meal.calories} kcal</div>
-                    </div>
-                  ))}
-                </div>
+                <button
+                  onClick={() => setExpandedDay(expandedDay === index ? null : index)}
+                  className="w-full p-3 flex items-center justify-between text-left"
+                >
+                  <div>
+                    <span className="font-semibold text-text-primary">{day.day}</span>
+                    <span className="ml-2 text-xs text-text-secondary">
+                      {day.meals.reduce((a, m) => a + m.calories, 0)} kcal
+                    </span>
+                  </div>
+                  {expandedDay === index ? (
+                    <ChevronUp className="w-5 h-5 text-text-secondary" />
+                  ) : (
+                    <ChevronDown className="w-5 h-5 text-text-secondary" />
+                  )}
+                </button>
+                
+                {expandedDay === index && (
+                  <div className="px-3 pb-3 space-y-2">
+                    {day.meals.map((meal, mealIndex) => (
+                      <div key={mealIndex} className="p-2 bg-gray-50 rounded-lg">
+                        <div className="flex justify-between items-start mb-1">
+                          <span className="text-xs font-medium text-brand">{meal.name}</span>
+                          <span className="text-xs text-text-secondary">{meal.calories} kcal</span>
+                        </div>
+                        <div className="text-sm text-text-primary mb-1">{meal.dish}</div>
+                        {meal.protein && (
+                          <div className="text-xs text-text-secondary">
+                            P: {meal.protein}g | C: {meal.carbs}g | G: {meal.fat}g
+                          </div>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                )}
               </motion.div>
             ))}
           </div>
         )}
 
         {activeTab === "lista" && (
-          <div className="bg-white rounded-2xl p-6 shadow-card">
-            <h3 className="font-display text-xl font-bold text-text-primary mb-6">
-              Lista de la Compra Semanal
-            </h3>
-            <div className="grid md:grid-cols-2 gap-6">
-              {shoppingList.map((section) => (
-                <div key={section.category}>
-                  <h4 className="font-semibold text-text-primary mb-3">{section.category}</h4>
-                  <ul className="space-y-2">
-                    {section.items.map((item) => (
-                      <li key={item} className="flex items-center gap-2">
-                        <input type="checkbox" className="rounded text-brand" />
-                        <span className="text-sm text-text-secondary">{item}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              ))}
-            </div>
+          <div className="bg-white rounded-xl p-4 shadow-sm">
+            <h3 className="font-semibold text-text-primary mb-3">Lista de la Compra - Semana {currentWeek}</h3>
+            {plan.shoppingList && plan.shoppingList.length > 0 ? (
+              <div className="space-y-3">
+                {typeof plan.shoppingList[0] === 'object' && 'semana1' in plan.shoppingList[0] ? (
+                  // New format: { semana1: [...], semana2: [...] }
+                  (() => {
+                    const weeklyList = plan.shoppingList[0] as any;
+                    const currentList = weeklyList[`semana${currentWeek}`] || weeklyList[`semana_${currentWeek}`] || [];
+                    return currentList.map((section: any) => (
+                      <div key={section.category}>
+                        <h4 className="font-medium text-text-primary text-sm mb-2">{section.category}</h4>
+                        <ul className="space-y-1">
+                          {section.items.map((item: string) => (
+                            <li key={item} className="flex items-center gap-2">
+                              <input type="checkbox" className="rounded text-brand" />
+                              <span className="text-sm text-text-secondary">{item}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    ));
+                  })()
+                ) : (
+                  // Old format: single list for all weeks
+                  plan.shoppingList.map((section) => (
+                    <div key={section.category}>
+                      <h4 className="font-medium text-text-primary text-sm mb-2">{section.category}</h4>
+                      <ul className="space-y-1">
+                        {section.items.map((item) => (
+                          <li key={item} className="flex items-center gap-2">
+                            <input type="checkbox" className="rounded text-brand" />
+                            <span className="text-sm text-text-secondary">{item}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  ))
+                )}
+              </div>
+            ) : (
+              <p className="text-text-secondary text-sm">No hay lista de compra disponible. Genera el plan desde el formulario.</p>
+            )}
           </div>
         )}
 
-        <div className="flex flex-col sm:flex-row gap-4 mt-8 mb-16">
-          <button className="flex-1 py-4 bg-brand text-white rounded-full font-medium hover:bg-brand-dark transition-all flex items-center justify-center gap-2">
-            <Download className="w-5 h-5" />
+        <div className="flex flex-col sm:flex-row gap-3 mt-6 mb-12">
+          <button 
+            onClick={handleDownloadPDF}
+            className="flex-1 py-3 bg-brand text-white rounded-full font-medium hover:bg-brand-dark transition-all flex items-center justify-center gap-2"
+          >
+            <Download className="w-4 h-4" />
             Descargar PDF
           </button>
           <Link
             href="/crear-dieta"
-            className="flex-1 py-4 bg-white border-2 border-gray-200 text-text-primary rounded-full font-medium hover:bg-gray-50 transition-all flex items-center justify-center gap-2"
+            className="flex-1 py-3 bg-white border-2 border-gray-200 text-text-primary rounded-full font-medium hover:bg-gray-50 transition-all flex items-center justify-center gap-2"
           >
-            <RefreshCw className="w-5 h-5" />
-            Generar nueva dieta
+            <RefreshCw className="w-4 h-4" />
+            Nueva dieta
           </Link>
         </div>
       </div>

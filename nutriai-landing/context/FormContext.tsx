@@ -21,11 +21,29 @@ const FormContext = createContext<FormContextType | undefined>(undefined);
 
 export function FormProvider({ children }: { children: ReactNode }) {
   const [currentStep, setCurrentStep] = useState(1);
-  const [formData, setFormData] = useState<FormData>(initialFormData);
+  const [formData, setFormData] = useState<FormData>(() => {
+    if (typeof window !== "undefined") {
+      const saved = localStorage.getItem("nutriai-form-data");
+      if (saved) {
+        try {
+          return JSON.parse(saved);
+        } catch {
+          return initialFormData;
+        }
+      }
+    }
+    return initialFormData;
+  });
   const [isEditing, setIsEditing] = useState(false);
 
   const updateFormData = (data: Partial<FormData>) => {
-    setFormData((prev) => ({ ...prev, ...data }));
+    setFormData((prev) => {
+      const newData = { ...prev, ...data };
+      if (typeof window !== "undefined") {
+        localStorage.setItem("nutriai-form-data", JSON.stringify(newData));
+      }
+      return newData;
+    });
   };
 
   const nextStep = () => {
@@ -34,15 +52,6 @@ export function FormProvider({ children }: { children: ReactNode }) {
 
   const prevStep = () => {
     if (currentStep > 1) setCurrentStep(currentStep - 1);
-  };
-
-  const startEditing = () => {
-    setIsEditing(true);
-  };
-
-  const saveAndReturn = () => {
-    setIsEditing(false);
-    setCurrentStep(7);
   };
 
   const isValidStep = (step: number): boolean => {
@@ -67,6 +76,15 @@ export function FormProvider({ children }: { children: ReactNode }) {
   };
 
   const canGoNext = () => isValidStep(currentStep);
+
+  const startEditing = () => {
+    setIsEditing(true);
+  };
+
+  const saveAndReturn = () => {
+    setIsEditing(false);
+    setCurrentStep(7);
+  };
 
   return (
     <FormContext.Provider
@@ -95,4 +113,12 @@ export function useForm() {
     throw new Error("useForm must be used within a FormProvider");
   }
   return context;
+}
+
+export function useFormData() {
+  const context = useContext(FormContext);
+  if (!context) {
+    throw new Error("useFormData must be used within a FormProvider");
+  }
+  return context.formData;
 }

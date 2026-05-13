@@ -27,6 +27,7 @@ export interface FormData {
 
   // Step 6 - Hábitos
   mealsPerDay: number;
+  openToChangeMeals: boolean;
   mealTimes: string[];
   budget: "ajustado" | "moderado" | "sin_limite";
   cookAtHome: "si" | "a_veces" | "nunca";
@@ -53,6 +54,7 @@ export const initialFormData: FormData = {
   flavors: [],
   textures: [],
   mealsPerDay: 3,
+  openToChangeMeals: false,
   mealTimes: ["08:00", "14:00", "21:00"],
   budget: "moderado",
   cookAtHome: "a_veces",

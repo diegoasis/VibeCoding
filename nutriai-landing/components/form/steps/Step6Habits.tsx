@@ -78,6 +78,42 @@ export default function Step6Habits() {
         </p>
       </div>
 
+      {/* Abierto a cambiar */}
+      <div>
+        <label className="block text-sm font-semibold text-text-primary mb-3">
+          ¿Estás dispuesto/a a ajustar este número para optimizar tu objetivo?
+        </label>
+        <p className="text-xs text-text-secondary mb-3">
+          {formData.goals.includes("perder_peso") && "Para perder peso, 4-5 comidas suelen funcionar mejor."}
+          {formData.goals.includes("ganar_musculo") && "Para ganar músculo, 4-5 comidas con más proteína suelen funcionar mejor."}
+          {!formData.goals.includes("perder_peso") && !formData.goals.includes("ganar_musculo") && "Según tu objetivo, esto puede optimizarse."}
+        </p>
+        <div className="flex gap-2">
+          <button
+            type="button"
+            onClick={() => updateFormData({ openToChangeMeals: false })}
+            className={`flex-1 py-3 rounded-full text-sm font-medium transition-all ${
+              !formData.openToChangeMeals
+                ? "bg-brand text-white"
+                : "bg-gray-100 text-text-secondary hover:bg-gray-200"
+            }`}
+          >
+            No, prefiero mantener mi ritmo
+          </button>
+          <button
+            type="button"
+            onClick={() => updateFormData({ openToChangeMeals: true })}
+            className={`flex-1 py-3 rounded-full text-sm font-medium transition-all ${
+              formData.openToChangeMeals
+                ? "bg-brand text-white"
+                : "bg-gray-100 text-text-secondary hover:bg-gray-200"
+            }`}
+          >
+            Sí, estoy abierto/a a cambiar
+          </button>
+        </div>
+      </div>
+
       {/* Presupuesto */}
       <div>
         <label className="block text-sm font-semibold text-text-primary mb-3">

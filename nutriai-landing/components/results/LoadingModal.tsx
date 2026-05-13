@@ -25,11 +25,12 @@ export default function LoadingModal({ isLoading }: LoadingModalProps) {
 
     const interval = setInterval(() => {
       setProgress((prev) => {
-        if (prev >= 100) {
+        if (prev >= 95) {
           clearInterval(interval);
           return 100;
         }
-        return prev + Math.random() * 15;
+        const increment = prev < 30 ? 8 : prev < 60 ? 5 : prev < 80 ? 3 : 2;
+        return Math.min(prev + increment + Math.random() * 2, 100);
       });
 
       setCurrentStep((prev) => {

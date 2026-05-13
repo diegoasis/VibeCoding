@@ -5,9 +5,9 @@ import { Scale, TrendingUp, Target, Zap, Wind, Trophy, Droplet, Leaf } from "luc
 import { cn } from "@/lib/utils";
 
 const goalOptions = [
-  { id: "perder_peso", icon: Scale, title: "Perder peso", description: "Reducir grasa corporal de forma sostenible" },
+  { id: "perder_peso", icon: Scale, title: "Perder peso", description: "Reducir peso total (grasa + músculo)" },
   { id: "ganar_musculo", icon: TrendingUp, title: "Ganar músculo", description: "Aumentar masa muscular con suficiente proteína" },
-  { id: "mantener_peso", icon: Target, title: "Mantener peso", description: "Comer bien sin cambiar tu composición actual" },
+  { id: "mantener_peso", icon: Target, title: "Mantener peso", description: "Combínalo con ganar músculo para recomp" },
   { id: "mejorar_energia", icon: Zap, title: "Mejorar energía", description: "Nutrición para sentirte más activo/a y concentrado/a" },
   { id: "salud_digestiva", icon: Wind, title: "Salud digestiva", description: "Dieta que cuide tu microbiota y digestión" },
   { id: "rendimiento_deportivo", icon: Trophy, title: "Rendimiento deportivo", description: "Alimentación orientada al entrenamiento" },
@@ -24,13 +24,50 @@ const speedOptions = [
 export default function Step3Goals() {
   const { formData, updateFormData } = useForm();
 
+  const isIncompatible = (goals: string[], newGoal: string): string | null => {
+    const hasPerderPeso = goals.includes("perder_peso");
+    const hasPerderGrasa = goals.includes("perder_grasa");
+    const hasMantener = goals.includes("mantener_peso");
+    const hasGanarMusculo = goals.includes("ganar_musculo");
+    
+    if (newGoal === "mantener_peso" && (hasPerderPeso || hasPerderGrasa || hasGanarMusculo)) {
+      return "Mantener peso es incompatible con perder peso, perder grasa o ganar músculo";
+    }
+    if (newGoal === "perder_peso" && (hasMantener || hasPerderGrasa)) {
+      return "No puedes combinar perder peso con mantener peso o perder grasa";
+    }
+    if (newGoal === "perder_grasa" && hasMantener) {
+      return "No puedes perder grasa y mantener peso a la vez";
+    }
+    if (newGoal === "ganar_musculo" && hasMantener) {
+      return "No puedes ganar músculo y mantener peso a la vez";
+    }
+    return null;
+  };
+
+  const getIncompatibleWith = (newGoal: string): string[] => {
+    switch (newGoal) {
+      case "mantener_peso":
+        return ["perder_peso"];
+      case "perder_peso":
+        return ["mantener_peso"];
+      default:
+        return [];
+    }
+  };
+
   const toggleGoal = (goalId: string) => {
     const current = formData.goals;
+    
     if (current.includes(goalId)) {
       updateFormData({ goals: current.filter(g => g !== goalId) });
     } else {
-      if (current.length < 3) {
-        updateFormData({ goals: [...current, goalId] });
+      // Remove incompatible goals automatically
+      const toRemove = getIncompatibleWith(goalId);
+      const filtered = current.filter(g => !toRemove.includes(g));
+      
+      if (filtered.length < 3) {
+        updateFormData({ goals: [...filtered, goalId] });
       }
     }
   };

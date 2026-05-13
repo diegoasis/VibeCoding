@@ -62,7 +62,14 @@ export default function StepNavigation() {
         ) : (
           <button
             type="button"
-            onClick={() => router.push("/resultados?from=form")}
+            onClick={() => {
+                const formData = localStorage.getItem("nutriai-form-data");
+                if (formData) {
+                  router.push("/resultados?from=form");
+                } else {
+                  router.push("/resultados?from=form");
+                }
+              }}
             className="px-8 py-4 text-lg font-medium rounded-full bg-brand text-white hover:bg-brand-dark transition-all duration-200"
           >
             ✨ Generar mi plan de dieta personalizado
